@@ -4,10 +4,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+		<title>CSRA: Automating the Trends Report</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="A case study in automated analysis and reporting by Matt Frost, CSRA">
+		<meta name="author" content="Matt Frost">
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,7 +15,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -48,6 +49,30 @@
 					</p>
 				</section>
 
+				<section style="text-align: left;">
+					<h2>About the Trends Report</h2>
+					<p>
+						"Light-Duty Automotive Technology, Carbon Dioxide Emissions, and Fuel Economy Trends: 1975&ndash;2015."
+					</p>
+					<aside class="notes">
+						<p>
+						 The report combines data from EPA's compliance and labeling data systems. The tables and figures summarize and compare the aggregate characteristics of each year's new-vehicle fleet. All summary values are weighted by production, but the production numbers themselves cannot be published.
+						</p>
+    			</aside>
+				</section>
+
+				<section style="text-align: left;">
+					<h2>Pre-R Workflow</h2>
+					<h3>Circa 2008</h3>
+					<p>
+						Text files &#x2192; Access &#x2192; FORTRAN* script &#x2192; Text files &#x2192; Access &#x2192; Excel or other graphing tool
+					</p>
+					<p><br/><small>* Yes, really!</small>
+					</p>
+					<aside class="notes">
+						The old workflow required extensive repetitive work, and offered abundant opportunities for human error. Cars and trucks were stored in separate tables, etc.
+					</aside>
+				</section>
 
 				<section style="text-align: left;">
 					<h2>Two Tracks: Data Preparation and Report Production</h2>
@@ -56,7 +81,7 @@
 					</p>
 					<aside class="notes">
 
-    			</aside>
+					</aside>
 				</section>
 
 				<section style="text-align: left;">
@@ -74,19 +99,6 @@
 
 					<aside class="notes">
 						Describe the data cleaning process, including multiple and overlapping deliveries of source data, complexity of importing multiple rows, flattening of relational data.
-					</aside>
-				</section>
-
-				<section style="text-align: left;">
-					<h2>Pre-R Workflow</h2>
-					<h3>Circa 2008</h3>
-					<p>
-						Access &#x2192; FORTRAN* script &#x2192; Text files &#x2192; Access &#x2192; Excel or other graphing tool
-					</p>
-					<p><br/><small>* Yes, really!</small>
-					</p>
-					<aside class="notes">
-						The old workflow required extensive repetitive work, and offered abundant opportunities for human error. Cars and trucks were stored in separate tables, etc.
 					</aside>
 				</section>
 
@@ -119,7 +131,25 @@
 						 <img data-src="figure_new.jpg">
 					</p>
 					<aside class="notes">
-							R produces figures acceptable for initial review with no turnaround time.
+							R produces figures acceptable for initial review with no additional turnaround time.
+					</aside>
+				</section>
+
+				<section style="text-align: left;">
+					<h2>Figure Production Source Code</h2>
+					<p>
+						 <pre><code>
+ggplot(mpg.percentile , aes(x=MODEL_YEAR)) +
+facet_wrap(~ CarOrTruck , ncol=2 ) +
+geom_ribbon(aes(ymin=worst, ymax=best), fill="#FCF9CE", color="darkgray") +
+geom_ribbon(aes(ymin=pct05, ymax=pct95), fill="#A3D6B3", color="darkgray") +
+geom_ribbon(aes(ymin=pct25, ymax=pct75), fill="#2C7FB9", color="darkgray") +
+scale_y_continuous(name='Adjusted Composite MPG', limits=c(0, 70),breaks=seq(0,80,10)) +
+scale_x_continuous(name='Model Year', limits=c(1975, 2020),breaks=seq(1975,2020,5))
+						 </code></pre>
+					</p>
+					<aside class="notes">
+							The ggplot source code is provided here for the true fans.
 					</aside>
 				</section>
 
@@ -135,7 +165,7 @@
 				</section>
 
 				<section style="text-align: left;">
-					<h2>RMarkdown & knitr</h2>
+					<h2>RMarkdown &amp; knitr</h2>
 					<p>
 							<img data-src="knitr.png">
 					</p>
@@ -148,10 +178,10 @@
 				<h2>Version Control</h2>
 				<p>
 					<img data-src="sourcetree_detail1.png">
-										<img data-src="sourcetree_detail2.png">
+					<img data-src="sourcetree_detail2.png">
 				</p>
 				<aside class="notes">
-						Version control offered the final missing piece of the data/production workflow. Any changes to the database or to the production script show up in Sourcetree. By using git for version control, we back up the script and the output files and maintain a log of all our work, all with very little overhead. The level of detail that the git log offers has been invaluable when questions arise about data or script revisions.
+						Version control offered the final missing piece of the data/production workflow. Any changes to the database or to the production script show up in Sourcetree. By using git for version control, we back up the script and the output files and maintain a log of all our work, all with very little overhead. The level of detail that the git log offers has been invaluable when questions arise about data or script revisions. Mention here that the markdown output is a useful place to look for changes.
 				</aside>
 			</section>
 
@@ -166,9 +196,25 @@
 					<ul>
 				</p>
 				<aside class="notes">
-						The version control repository only includes the production script and the output.
+						The version control repository only includes the production script and the output. The happy outcome of this constraint is that we have cleanly separated the data store from the business logic and presentation layers.
 				</aside>
+				</section>
+				<section style="text-align: left;">
+					<h2>Other Potential Applications</h2>
+					<p>
+						<ul>
+							<li>Business intelligence "dashboards"</li>
+							<li>Daily, weekly, or monthly reporting</li>
+							<li>Interactive reporting via Shiny</li>
+						<ul>
+					</p>
+					<aside class="notes">
+							The sophisticated business logic and presentation tools in R are more flexible than what OLAP tools like OBI or APEX offer, and with Shiny, the R environment can even be interactive. Many applications, though, don't need interactivity: frequently refreshed exhibits are enough.
+					</aside>
 			</section>
+							<div class="footer">
+		            <img src="logo.png">
+		          </div>
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
